@@ -20,7 +20,14 @@ app.get('/', (req, res) => {
   res.render('index')
 })
 
-// console.log(Math.floor(Math.random() * (spookyWords.length - 1)) + 1)
+const Game = mongoose.model('game', {
+  answer: Array,
+  board: Array,
+  player1: String,
+  player2: String,
+  toMove: String,
+  result: String,
+})
 
 
 const wordSelect = () => {
@@ -48,7 +55,7 @@ const underScore = (selectedWord) => {
 
 wordConvert("werewolf")
 
-
+mongoose.Promise = Promise
 mongoose.connect(MONGODB_URL, () => {
   server.listen(PORT, () => console.log(`Server listening on ${PORT}`))
 })
