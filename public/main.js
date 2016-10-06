@@ -12,10 +12,10 @@ const spookyWords = [
   return selectedWord
 }
 wordSelect()
-
+let splitArray = []
 // Converting word to array of letter strings
 const wordConvert = (selectedWord) => {
-  const splitArray = selectedWord.split('')
+  splitArray = selectedWord.split('')
   console.log("split", splitArray)
   return splitArray
 }
@@ -49,11 +49,24 @@ $('#spin').on('click', () => {
 })
 
 $('#enterLetter').on('click', () => {
-	let letter = $('letter').value
+	let letter = $('#letter').val().toLowerCase()
+	console.log("letter", letter);
+	letterCheck(letter)
 	// Regex for value being only one letter
 	// function to add or reject letter
 	// socket emit result
 })
+
+// Return the array position of the guessed letter
+const letterCheck = (letter) => {
+	let indices = []
+	let result = splitArray.filter((x, index) => {
+		if (x === letter) {
+			indices.push(index)
+		}
+		return indices
+	})
+}
 
 $('#guessWord').on('click', () => {
 	
