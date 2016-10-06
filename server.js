@@ -20,11 +20,15 @@ app.get('/', (req, res) => {
   res.render('index')
 })
 
+const spookyWords = [
+  "afraid","apparition","bloodcurdling","bloody","bonechilling","bones","broomstick","cackle","cadaver","carve","casket","cauldron","cemetery","chilling","cobweb","coffin","costume","crawly","creature","creepy","dark","decapitate","dew","disembowel","dreadful","exsanguinate","fangtastic","frightening","ghostly","ghoulish","goblin","gory","grave","gruesome","haunted","hellhound","howl","lovecraftian","macabre","mausoleum","moonlit","morbid","mummy","ominous","party","phantom","poltergeist","potion","pumpkin","scary","scott","scream","shadow","skeleton","skull","socketio","specter","spell","spider","spirits","spooky","supernatural","superstition","terrifying","tests","tombstone","treat","trick","undead","unearthly","unnerving","vampire","warlock","werewolf","witch","wizard","wraith","zombie"
+]
+
 
 
 
 mongoose.connect(MONGODB_URL, () => {
-server.listen(PORT, () => console.log(`Server listening on ${PORT}`))
+  server.listen(PORT, () => console.log(`Server listening on ${PORT}`))
 })
 
 io.on('connect', socket => {
