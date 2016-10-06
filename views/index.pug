@@ -1,10 +1,26 @@
-doctype
-html
+doctype html
+html(lang='en')
   head
     title Wheel of Horrible Misfortune
-    link(rel='stylesheet', href='/main.css')
+    link(rel='stylesheet', href='/lib/bootstrap/dist/css/bootstrap.min.css')
   body
     h1 Wheel of Horrible Misfortune
-
-    script(src='/socket.io/socket.io.js')
-    script(src='/main.js')
+    #container
+      #gameWord
+      #missLetters
+      #players
+        #pl1(<h3='')
+          | Player 1
+          input(type='text', value='pl1Score')
+        .Player(class='rndPlayer> <h3>Current Here</div> </div> <div id=', <h3='')
+          | Player 2
+          input(type='text', value='pl2Score')
+      #gamePlay
+        div
+          button.btn.btn-info(type='button')
+            | Spin
+          input(type='text', value='letter')
+          input(type='text', value='word')
+        div
+          button.btn.btn-info(type='button')
+            | Guess Word
