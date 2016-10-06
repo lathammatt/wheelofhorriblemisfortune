@@ -2,6 +2,8 @@
 
 const socket = io()
 
+//----------MOVE TO BACKEND----------------
+
 const wordSelect = () => {
 const spookyWords = [
   "afraid", "apparition", "bloodcurdling", "bloody", "bonechilling", "bones", "broomstick", "cackle", "cadaver", "carve", "casket", "cauldron", "cemetery", "chilling", "cobweb", "coffin", "costume", "crawly", "creature", "creepy", "dark", "decapitate", "dew", "disembowel", "dreadful", "exsanguinate", "fangtastic", "frightening", "ghostly", "ghoulish", "goblin", "gory", "grave", "gruesome", "haunted", "hellhound", "howl", "lovecraftian", "macabre", "mausoleum", "moonlit", "morbid", "mummy", "ominous", "party", "phantom", "poltergeist", "potion", "pumpkin", "scary", "scott", "scream", "shadow", "skeleton", "skull", "socketio", "specter", "spell", "spider", "spirits", "spooky", "supernatural", "superstition", "terrifying", "tests", "tombstone", "treat", "trick", "undead", "unearthly", "unnerving", "vampire", "warlock", "werewolf", "witch", "wizard", "wraith", "zombie"
@@ -28,6 +30,8 @@ const underScore = (selectedWord) => {
   console.log("scoredArray", scoredArray);
   arrayOutput(scoredArray)
 }
+
+//----------------------------------------------------------
 
 // Putting underscores to DOM with spacing
 const arrayOutput = (scoredArray) => {
@@ -56,7 +60,7 @@ $('#enterLetter').on('click', () => {
 })
 
 $('#guessWord').on('click', () => {
-	
+
 })
 
 socket.on('connect', () => console.log(`Socket connected: ${socket.id}`))
