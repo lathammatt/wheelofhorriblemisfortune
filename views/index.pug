@@ -3,24 +3,31 @@ html(lang='en')
   head
     title Wheel of Horrible Misfortune
     link(rel='stylesheet', href='/lib/bootstrap/dist/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/main.css')
   body
-    h1 Wheel of Horrible Misfortune
+    h1.wheel Wheel of Horrible Misfortune
     #container
-      #gameWord
-      #missLetters
-      #players
-        #pl1(<h3='')
-          | Player 1
-          input(type='text', value='pl1Score')
-        .Player(class='rndPlayer> <h3>Current Here</div> </div> <div id=', <h3='')
-          | Player 2
-          input(type='text', value='pl2Score')
-      #gamePlay
-        div
-          button.btn.btn-info(type='button')
+      #gameWord.row
+      #missLetters.row
+      #players.row
+        #pl1.col-sm-4
+          h3 Player 1
+          label(for='size_1') Score
+          input#pl1Score(type='text', value='0')
+        .rndPlayer.col-sm-4
+          h3 Current Player Here
+        #pl2.col-sm-4
+          h3 Player 2
+          label(for='size_1') Score
+          input#pl2Score(type='text', value='0')
+      #gamePlay.row
+        .col-sm-6
+          button.btn.btn-primary(type='button')
             | Spin
+        .col-sm-6
           input(type='text', value='letter')
           input(type='text', value='word')
-        div
-          button.btn.btn-info(type='button')
-            | Guess Word
+        .row
+          .col-sm-12.offset-sm-5
+            button.btn.btn-danger(type='button')
+              | Guess Word
