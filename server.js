@@ -30,30 +30,30 @@ const Game = mongoose.model('game', {
 })
 
 
-const wordSelect = () => {
-const spookyWords = [
-  "afraid", "apparition", "bloodcurdling", "bloody", "bonechilling", "bones", "broomstick", "cackle", "cadaver", "carve", "casket", "cauldron", "cemetery", "chilling", "cobweb", "coffin", "costume", "crawly", "creature", "creepy", "dark", "decapitate", "dew", "disembowel", "dreadful", "exsanguinate", "fangtastic", "frightening", "ghostly", "ghoulish", "goblin", "gory", "grave", "gruesome", "haunted", "hellhound", "howl", "lovecraftian", "macabre", "mausoleum", "moonlit", "morbid", "mummy", "ominous", "party", "phantom", "poltergeist", "potion", "pumpkin", "scary", "scott", "scream", "shadow", "skeleton", "skull", "socketio", "specter", "spell", "spider", "spirits", "spooky", "supernatural", "superstition", "terrifying", "tests", "tombstone", "treat", "trick", "undead", "unearthly", "unnerving", "vampire", "warlock", "werewolf", "witch", "wizard", "wraith", "zombie"
-]
-  const random = Math.floor(Math.random() * (spookyWords.length - 1)) + 1
-  const selectedWord = spookyWords[random]
-  console.log("word", selectedWord)
-  return selectedWord
-}
-wordSelect()
+// const wordSelect = () => {
+// const spookyWords = [
+//   "afraid", "apparition", "bloodcurdling", "bloody", "bonechilling", "bones", "broomstick", "cackle", "cadaver", "carve", "casket", "cauldron", "cemetery", "chilling", "cobweb", "coffin", "costume", "crawly", "creature", "creepy", "dark", "decapitate", "dew", "disembowel", "dreadful", "exsanguinate", "fangtastic", "frightening", "ghostly", "ghoulish", "goblin", "gory", "grave", "gruesome", "haunted", "hellhound", "howl", "lovecraftian", "macabre", "mausoleum", "moonlit", "morbid", "mummy", "ominous", "party", "phantom", "poltergeist", "potion", "pumpkin", "scary", "scott", "scream", "shadow", "skeleton", "skull", "socketio", "specter", "spell", "spider", "spirits", "spooky", "supernatural", "superstition", "terrifying", "tests", "tombstone", "treat", "trick", "undead", "unearthly", "unnerving", "vampire", "warlock", "werewolf", "witch", "wizard", "wraith", "zombie"
+// ]
+//   const random = Math.floor(Math.random() * (spookyWords.length - 1)) + 1
+//   const selectedWord = spookyWords[random]
+//   console.log("word", selectedWord)
+//   return selectedWord
+// }
+// wordSelect()
 
-const wordConvert = (selectedWord) => {
-  const splitArray = selectedWord.split('')
-  console.log("split", splitArray)
-  return splitArray
-}
+// const wordConvert = (selectedWord) => {
+//   const splitArray = selectedWord.split('')
+//   console.log("split", splitArray)
+//   return splitArray
+// }
 
-const underScore = (selectedWord) => {
-  const scoredArray = selectedWord.replace(/./g, '_').split('')
-  console.log(scoredArray)
-  return scoredArray
-}
+// const underScore = (selectedWord) => {
+//   const scoredArray = selectedWord.replace(/./g, '_').split('')
+//   console.log(scoredArray)
+//   return scoredArray
+// }
 
-wordConvert("werewolf")
+// wordConvert("werewolf")
 
 mongoose.Promise = Promise
 mongoose.connect(MONGODB_URL, () => {

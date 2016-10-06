@@ -2,6 +2,10 @@ body {
 	background-color: lightblue;
 }
 
+.theWord {
+	text-align: center;
+}
+
 .wheel {
 	text-align: center;
 }
