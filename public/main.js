@@ -4,3 +4,4 @@ const socket = io()
 
 socket.on('connect', () => console.log(`Socket connected: ${socket.id}`))
 socket.on('disconnect', () => console.log(`Socket disconnected`))
+socket.on('error', console.error)
