@@ -14,7 +14,33 @@ body {
 	text-align: center;
 }
 
-#gameplay {
-	
+#missLetters {
+	font-size: 1.5em;
 }
+
+/* Spin Btn */
+#spinIt {
+	height: 40px;
+}
+
+#spin {
+	margin-top: 3px;
+}
+
+input {
+ 	margin: 15px;
+}
+
+#gamePlay {
+	height: 80px;
+}
+
+#choiceResponse {
+	text-align: center;
+	font-size: 1.2em;
+	margin-top: 20px;
+}
+
+
+
 
