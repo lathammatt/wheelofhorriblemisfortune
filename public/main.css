@@ -31,6 +31,16 @@ input {
  	margin: 15px;
 }
 
+#gamePlay {
+	height: 80px;
+}
+
+#choiceResponse {
+	text-align: center;
+	font-size: 1.2em;
+	margin-top: 20px;
+}
+
 
 
 
