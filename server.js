@@ -27,10 +27,10 @@ app.get('/', (req, res) => {
     .then(games => res.render('home', { games }))
 })
 
-app.get('/game', (req, res) => {
-  Game.find()
-    .then(games => res.render('index', { games }))
-})
+// app.get('/game', (req, res) => {
+//   Game.find()
+//     .then(games => res.render('index', { games }))
+// })
 app.get('/game/create', (req, res) => {
   Game.create({
 
@@ -55,6 +55,7 @@ const Game = mongoose.model('game', {
   answer: Array,
   split: Array,
   currentBoard: Array,
+  guesses: Array,
   player1: String,
   player2: String,
   toMove: String,
