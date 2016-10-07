@@ -14,6 +14,10 @@ body {
 	text-align: center;
 }
 
+#missLetters {
+	font-size: 1.5em;
+}
+
 /* Spin Btn */
 #spinIt {
 	height: 40px;
