@@ -6,6 +6,9 @@ html
   body
     h1 Tick Tack Doh!
     .create
-      a(href='/game/create') Start New Game
+      a(href='/game/create') Start New
+    if games.length
     .join
       a(href='/game') Join a Pending Game
+      for game in games
+        li: a(href=`/index/${game._id}`) Game: #{game._id}

@@ -27,13 +27,13 @@ app.get('/', (req, res) => {
     .then(games => res.render('home', { games }))
 })
 
-app.get('/game', (req, res) => {
-  Game.find()
-    .then(games => res.render('index', { games }))
-})
+// app.get('/game', (req, res) => {
+//   Game.find()
+//     .then(games => res.render('index', { games }))
+// })
 app.get('/game/create', (req, res) => {
   Game.create({
-
+      guesses: []
     })
     .then(game => wordSelect(game))
     .then(g => g.save())
@@ -55,6 +55,9 @@ const Game = mongoose.model('game', {
   answer: Array,
   split: Array,
   currentBoard: Array,
+  guesses: Array,
+  indices: Array,
+  missedLetters: Array,
   player1: String,
   player2: String,
   toMove: String,
@@ -95,25 +98,32 @@ const isFinished = game => !!game.result
 
 //selecting a word for puzzle, making blank array for dom population and split array of word letters for matching
 const wordSelect = (game) => {
-  console.log("game1", game)
-  let selectedWord = []
-  const spookyWords = [
-    "afraid", "apparition", "bloodcurdling", "bloody", "bonechilling", "bones", "broomstick", "cackle", "cadaver", "carve", "casket", "cauldron", "cemetery", "chilling", "cobweb", "coffin", "costume", "crawly", "creature", "creepy", "dark", "decapitate", "dew", "disembowel", "dreadful", "exsanguinate", "fangtastic", "frightening", "ghostly", "ghoulish", "goblin", "gory", "grave", "gruesome", "haunted", "hellhound", "howl", "lovecraftian", "macabre", "mausoleum", "moonlit", "morbid", "mummy", "ominous", "party", "phantom", "poltergeist", "potion", "pumpkin", "scary", "scott", "scream", "shadow", "skeleton", "skull", "socketio", "specter", "spell", "spider", "spirits", "spooky", "supernatural", "superstition", "terrifying", "tests", "tombstone", "treat", "trick", "undead", "unearthly", "unnerving", "vampire", "warlock", "werewolf", "witch", "wizard", "wraith", "zombie"
-  ]
-  const random = Math.floor(Math.random() * (spookyWords.length - 1)) + 1
-  selectedWord = spookyWords[random]
-  game.answer = selectedWord
-  console.log("word", selectedWord)
+    console.log("game1", game)
+    let selectedWord = []
+    const spookyWords = [
+      "afraid", "apparition", "bloodcurdling", "bloody", "bonechilling", "bones", "broomstick", "cackle", "cadaver", "carve", "casket", "cauldron", "cemetery", "chilling", "cobweb", "coffin", "costume", "crawly", "creature", "creepy", "dark", "decapitate", "dew", "disembowel", "dreadful", "exsanguinate", "fangtastic", "frightening", "ghostly", "ghoulish", "goblin", "gory", "grave", "gruesome", "haunted", "hellhound", "howl", "lovecraftian", "macabre", "mausoleum", "moonlit", "morbid", "mummy", "ominous", "party", "phantom", "poltergeist", "potion", "pumpkin", "scary", "scott", "scream", "shadow", "skeleton", "skull", "socketio", "specter", "spell", "spider", "spirits", "spooky", "supernatural", "superstition", "terrifying", "tests", "tombstone", "treat", "trick", "undead", "unearthly", "unnerving", "vampire", "warlock", "werewolf", "witch", "wizard", "wraith", "zombie"
+    ]
+    const random = Math.floor(Math.random() * (spookyWords.length - 1)) + 1
+    selectedWord = spookyWords[random]
+    game.answer = selectedWord
+    console.log("word", selectedWord)
+    game.split = wordConvert(selectedWord)
+    game.currentBoard = underScore(selectedWord)
+    return game
+  }
+  //makes split array of letters from word
+const wordConvert = (selectedWord) => {
     let splitArray = []
     splitArray = selectedWord.split('')
-  game.split = splitArray
+    return splitArray
+  }
+  //makes array of blanks for start of game
+const underScore = (selectedWord) => {
   let scoredArray = []
   scoredArray = selectedWord.replace(/./g, '__.').split('.')
   scoredArray.pop()
-  game.currentBoard = scoredArray
-  return game
+  return scoredArray
 }
-
 
 mongoose.Promise = Promise
 mongoose.connect(MONGODB_URL, () => {
@@ -134,16 +144,58 @@ io.on('connect', socket => {
       console.error(err)
     })
 
-  socket.on('player move', move => playerTurn(move, socket))
+  socket.on('player move', letter => playerTurn(letter, socket))
   console.log(`Socket connected: ${socket.id}`)
   socket.on('disconnect', () => console.log(`Socket disconnected`))
 })
 
 
 
-const setMove = (game, move) => {
-  // game.currentBoard update
+const setMove = (game, letter) => {
+  console.log("guesses", game.guesses)
+  // chekc is to find matches with guesses to see if letter has been picked before
+  let check = game.guesses.filter((x) => {
+      if (x === letter) {
+        // creates check array of matches
+        return letter
+      }
+  })
+  if (check.length > 0) {
+    // if match to guesses is found, then letter has been guessed before. Return game
+    return game
+  } else {
+    // otherwise we process correct letter guess
+    game.guesses.push(letter) // pushed into guesses
+    game.indices = letterCheck(letter, game)
+    game.currentBoard = arraySwitch(letter, game)
+  }
 }
+
+const letterCheck = (letter, game) => {
+  let indices = []
+  let result = game.split.filter((x, index) => {
+    if (x === letter) {
+      indices.push(index)
+    }
+  })
+  console.log("indexes", indices)
+  return indices
+}
+
+const arraySwitch = (letter, game) => {
+  console.log("scored", scoredArray)
+  if (game.indices.length === 0) {
+    game.missedLetters.push(letter)
+  } else {
+    for (var i = 0; i < game.indices.length; i++) {
+      console.log("in loop", game.indices[i], letter)
+      game.currentBoard.splice(game.indices[i], 1, letter)
+    }
+    console.log("new", game.currentBoard)
+    game.indices = []
+  }
+}
+
 
 const toggleNextMove = game => {
   game.toMove = game.toMove === game.player1 ? game.player2 : game.player1
@@ -167,7 +219,7 @@ const setResult = (game, socket) => {
 }
 
 //whole process of player turn
-const playerTurn = (move, socket) => {
+const playerTurn = (letter, socket) => {
   Game.findById(socket.gameID)
     .then(game => {
       if (isFinished(game)) {
@@ -175,7 +227,7 @@ const playerTurn = (move, socket) => {
       }
       return game
     })
-    .then(g => setMove(g, move))
+    .then(g => setMove(g, letter))
     .then(toggleNextMove)
     .then(setResult)
     .then(g => g.save())
