@@ -28,7 +28,7 @@ app.get('/game/create', (req, res) => {
   Game.create({
       answer: [],
     })
-    .then(selectedWord(game))
+    .then(wordSelect(game))
     .then(game => res.redirect(`/game/${game._id}`))
 })
 app.get('/game/:id', (req, res) => {
@@ -74,6 +74,7 @@ const attemptToJoinGameAsPlayer = (game, socket) => {
 const randomPlayerNumber = () => Math.round(Math.random()) + 1
 const hasZeroPlayers = game => !game.player1 && !game.player2
 const hasTwoPlayers = game => !!(game.player1 && game.player2)
+
 const isPlayersTurn = (game, socket) => game.toMove === socket.id
 const isFinished = game => !!game.result
 
@@ -100,14 +101,17 @@ const wordConvert = (selectedWord, game) => {
 }
 
 // Converting string letters to underscores
-const underScore = (selectedWord) => {
+const underScore = (selectedWord, game) => {
   let scoredArray = []
   scoredArray = selectedWord.replace(/./g, '__.').split('.')
   scoredArray.pop()
-  console.log(typeof scoredArray)
-  console.log("scoredArray", scoredArray);
-  arrayOutput(scoredArray)
+  game.blank = scoredArray
+  return game
 }
+
+
+
+
 
 
 

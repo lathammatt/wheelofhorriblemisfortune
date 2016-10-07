@@ -13,15 +13,15 @@ const socket = io()
 // }
 
 
-// Converting string letters to underscores
-let scoredArray = []
-const underScore = (selectedWord) => {
-  scoredArray = selectedWord.replace(/./g, '__.').split('.')
-  scoredArray.pop()
-  console.log(typeof scoredArray)
-  console.log("scoredArray", scoredArray);
-  arrayOutput(scoredArray)
-}
+// // Converting string letters to underscores
+// let scoredArray = []
+// const underScore = (selectedWord) => {
+//   scoredArray = selectedWord.replace(/./g, '__.').split('.')
+//   scoredArray.pop()
+//   console.log(typeof scoredArray)
+//   console.log("scoredArray", scoredArray);
+//   arrayOutput(scoredArray)
+// }
 
 
 // Putting underscores to DOM with spacing
@@ -47,7 +47,7 @@ $('#enterLetter').on('click', () => {
   console.log("guesses", guesses)
   let letter = $('#letter').val().toLowerCase()
   let check = guesses.filter((x) => {
-    if (x === letter) {    
+    if (x === letter) {
       return letter
       // socket.emit('player move', letter)
     }
@@ -58,7 +58,7 @@ $('#enterLetter').on('click', () => {
     //console.log("Letter already picked")
   } else {
     console.log("letter", letter);
-    $('#choiceResponse').html(`Good choice!`)  
+    $('#choiceResponse').html(`Good choice!`)
     guesses.push(letter)
     letterCheck(letter)
   }
@@ -70,7 +70,7 @@ const letterCheck = (letter) => {
   let result = splitArray.filter((x, index) => {
     if (x === letter) {
       indices.push(index)
-    } 
+    }
   })
   console.log("index", indices)
   arraySwitch(letter)
