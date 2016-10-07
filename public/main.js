@@ -2,25 +2,16 @@
 
 const socket = io()
 
-//----------MOVE TO BACKEND----------------
-let selectedWord = []
-const wordSelect = () => {
-  const spookyWords = [
-    "afraid", "apparition", "bloodcurdling", "bloody", "bonechilling", "bones", "broomstick", "cackle", "cadaver", "carve", "casket", "cauldron", "cemetery", "chilling", "cobweb", "coffin", "costume", "crawly", "creature", "creepy", "dark", "decapitate", "dew", "disembowel", "dreadful", "exsanguinate", "fangtastic", "frightening", "ghostly", "ghoulish", "goblin", "gory", "grave", "gruesome", "haunted", "hellhound", "howl", "lovecraftian", "macabre", "mausoleum", "moonlit", "morbid", "mummy", "ominous", "party", "phantom", "poltergeist", "potion", "pumpkin", "scary", "scott", "scream", "shadow", "skeleton", "skull", "socketio", "specter", "spell", "spider", "spirits", "spooky", "supernatural", "superstition", "terrifying", "tests", "tombstone", "treat", "trick", "undead", "unearthly", "unnerving", "vampire", "warlock", "werewolf", "witch", "wizard", "wraith", "zombie"
-  ]
-  const random = Math.floor(Math.random() * (spookyWords.length - 1)) + 1
-  selectedWord = spookyWords[random]
-  console.log("word", selectedWord)
-  // return selectedWord
-}
-wordSelect()
+
 let splitArray = []
   // Converting word to array of letter strings
 const wordConvert = (selectedWord) => {
+  underScore(selectedWord)
   splitArray = selectedWord.split('')
   console.log("split", splitArray)
   return splitArray
 }
+
 
 // Converting string letters to underscores
 let scoredArray = []
@@ -32,7 +23,6 @@ const underScore = (selectedWord) => {
   arrayOutput(scoredArray)
 }
 
-//----------------------------------------------------------
 
 // Putting underscores to DOM with spacing
 const arrayOutput = (scoredArray) => {
@@ -44,9 +34,8 @@ const arrayOutput = (scoredArray) => {
   }
 }
 
-underScore('werewolf')
 
-wordConvert("werewolf")
+
 
 $('#spin').on('click', () => {
   console.log("urmom");
@@ -102,7 +91,8 @@ const arraySwitch = (letter) => {
 }
 
 
-$('#guess').on('click', () => {
+$('#guessWord').on('click', () => {
+  console.log("fired")
   let wordGuess = $('#word').val().toLowerCase()
   let answer = selectedWord.toString()
   console.log(answer, wordGuess)
@@ -113,6 +103,24 @@ $('#guess').on('click', () => {
   }
   console.log(wordGuess)
 })
+
+
+let selectedWord = []
+const wordSelect = () => {
+  const spookyWords = [
+    "afraid", "apparition", "bloodcurdling", "bloody", "bonechilling", "bones", "broomstick", "cackle", "cadaver", "carve", "casket", "cauldron", "cemetery", "chilling", "cobweb", "coffin", "costume", "crawly", "creature", "creepy", "dark", "decapitate", "dew", "disembowel", "dreadful", "exsanguinate", "fangtastic", "frightening", "ghostly", "ghoulish", "goblin", "gory", "grave", "gruesome", "haunted", "hellhound", "howl", "lovecraftian", "macabre", "mausoleum", "moonlit", "morbid", "mummy", "ominous", "party", "phantom", "poltergeist", "potion", "pumpkin", "scary", "scott", "scream", "shadow", "skeleton", "skull", "socketio", "specter", "spell", "spider", "spirits", "spooky", "supernatural", "superstition", "terrifying", "tests", "tombstone", "treat", "trick", "undead", "unearthly", "unnerving", "vampire", "warlock", "werewolf", "witch", "wizard", "wraith", "zombie"
+  ]
+  const random = Math.floor(Math.random() * (spookyWords.length - 1)) + 1
+  selectedWord = spookyWords[random]
+  wordConvert(selectedWord)
+  console.log("word", selectedWord)
+  // return selectedWord
+}
+
+
+wordSelect()
+
+
 
 socket.on('connect', () => console.log(`Socket connected: ${socket.id}`))
 socket.on('disconnect', () => console.log(`Socket disconnected`))
