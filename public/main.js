@@ -47,16 +47,18 @@ $('#enterLetter').on('click', () => {
   console.log("guesses", guesses)
   let letter = $('#letter').val().toLowerCase()
   let check = guesses.filter((x) => {
-    if (x === letter) {
+    if (x === letter) {    
       return letter
       // socket.emit('player move', letter)
     }
   })
   console.log("check", check)
   if (check.length > 0) {
-    console.log("Letter already picked")
+    $('#choiceResponse').html(`This letter has already been picked, Bloodbag!`)
+    //console.log("Letter already picked")
   } else {
     console.log("letter", letter);
+    $('#choiceResponse').html(`Good choice!`)  
     guesses.push(letter)
     letterCheck(letter)
   }
@@ -68,7 +70,7 @@ const letterCheck = (letter) => {
   let result = splitArray.filter((x, index) => {
     if (x === letter) {
       indices.push(index)
-    }
+    } 
   })
   console.log("index", indices)
   arraySwitch(letter)
@@ -78,6 +80,7 @@ const arraySwitch = (letter) => {
   console.log("scored", scoredArray)
   if (indices.length === 0) {
     $('#missLetters').append(letter)
+    $('#choiceResponse').html(`Wrong letter Jackwagon!`)
     $('#letter').val('')
   } else {
     for (var i = 0; i < indices.length; i++) {
@@ -99,8 +102,10 @@ $('#guessWord').on('click', () => {
   console.log(answer, wordGuess)
   if (answer === wordGuess){
     arrayOutput(splitArray)
+    $('#choiceResponse').html(`Hazaa!  Correct!`)
   } else {
-    console.log("Wrong!")
+    $('#choiceResponse').html(`You have guessed wrong and we'll have to take a finger!`)
+    //console.log("Wrong!")
   }
   console.log(wordGuess)
 })
