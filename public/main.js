@@ -3,15 +3,15 @@
 const socket = io()
 
 //----------MOVE TO BACKEND----------------
-
+let selectedWord = []
 const wordSelect = () => {
   const spookyWords = [
     "afraid", "apparition", "bloodcurdling", "bloody", "bonechilling", "bones", "broomstick", "cackle", "cadaver", "carve", "casket", "cauldron", "cemetery", "chilling", "cobweb", "coffin", "costume", "crawly", "creature", "creepy", "dark", "decapitate", "dew", "disembowel", "dreadful", "exsanguinate", "fangtastic", "frightening", "ghostly", "ghoulish", "goblin", "gory", "grave", "gruesome", "haunted", "hellhound", "howl", "lovecraftian", "macabre", "mausoleum", "moonlit", "morbid", "mummy", "ominous", "party", "phantom", "poltergeist", "potion", "pumpkin", "scary", "scott", "scream", "shadow", "skeleton", "skull", "socketio", "specter", "spell", "spider", "spirits", "spooky", "supernatural", "superstition", "terrifying", "tests", "tombstone", "treat", "trick", "undead", "unearthly", "unnerving", "vampire", "warlock", "werewolf", "witch", "wizard", "wraith", "zombie"
   ]
   const random = Math.floor(Math.random() * (spookyWords.length - 1)) + 1
-  const selectedWord = spookyWords[random]
+  selectedWord = spookyWords[random]
   console.log("word", selectedWord)
-  return selectedWord
+  // return selectedWord
 }
 wordSelect()
 let splitArray = []
@@ -52,34 +52,49 @@ $('#spin').on('click', () => {
   console.log("urmom");
 })
 
+let guesses = []
 $('#enterLetter').on('click', () => {
   //need Regex check here
+  console.log("guesses", guesses)
   let letter = $('#letter').val().toLowerCase()
-  console.log("letter", letter);
-  letterCheck(letter)
+  let check = guesses.filter((x) => {
+    if (x === letter) {
+      return letter
+    }
+  })
+  console.log("check", check)
+  if (check.length > 0) {
+    console.log("Letter already picked")
+  } else {
+    console.log("letter", letter);
+    guesses.push(letter)
+    letterCheck(letter)
+  }
 })
 
 // Return the array position of the guessed letter
 let indices = []
 const letterCheck = (letter) => {
-    let result = splitArray.filter((x, index) => {
-      if (x === letter) {
-        indices.push(index)
-      }
-    })
-    console.log("index", indices)
-    arraySwitch(letter)
-  }
+  let result = splitArray.filter((x, index) => {
+    if (x === letter) {
+      indices.push(index)
+    }
+  })
+  console.log("index", indices)
+  arraySwitch(letter)
+}
 
 const arraySwitch = (letter) => {
   console.log("scored", scoredArray)
   if (indices.length === 0) {
     $('#missLetters').append(letter)
+    $('#letter').val('')
   } else {
     for (var i = 0; i < indices.length; i++) {
       console.log("in loop", indices[i], letter)
       scoredArray.splice(indices[i], 1, letter)
     }
+    $('#letter').val('')
     console.log("new", scoredArray)
     indices = []
     arrayOutput(scoredArray)
@@ -87,8 +102,16 @@ const arraySwitch = (letter) => {
 }
 
 
-$('#guessWord').on('click', () => {
-
+$('#guess').on('click', () => {
+  let wordGuess = $('#word').val().toLowerCase()
+  let answer = selectedWord.toString()
+  console.log(answer, wordGuess)
+  if (answer === wordGuess){
+    arrayOutput(splitArray)
+  } else {
+    console.log("Wrong!")
+  }
+  console.log(wordGuess)
 })
 
 socket.on('connect', () => console.log(`Socket connected: ${socket.id}`))
