@@ -29,16 +29,16 @@ $('#spin').on('click', () => {
   console.log("urmom");
 })
 
-let guesses = []
+// let guesses = []
 $('#enterLetter').on('click', () => {
   //need Regex check here
-  console.log("guesses", guesses)
+  // console.log("guesses", guesses)
   let letter = $('#letter').val().toLowerCase()
-  let check = guesses.filter((x) => {
-    if (x === letter) {
-      return letter
-      // socket.emit('player move', letter)
-    }
+  // let check = guesses.filter((x) => {
+  //   if (x === letter) {
+  //     return letter
+      socket.emit('player move', letter)
+    // }
   })
   console.log("check", check)
   if (check.length > 0) {
@@ -47,13 +47,12 @@ $('#enterLetter').on('click', () => {
   } else {
     console.log("letter", letter);
     $('#choiceResponse').html(`Good choice!`)
-    guesses.push(letter)
+    // guesses.push(letter)
     letterCheck(letter)
   }
 })
 
 // Return the array position of the guessed letter
-let indices = []
 const letterCheck = (letter) => {
   let result = splitArray.filter((x, index) => {
     if (x === letter) {
