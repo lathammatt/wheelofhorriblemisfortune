@@ -21,19 +21,23 @@ html(lang='en')
           h3 Player 2
           label(for='size_1') Score
           input#pl2Score(type='text', value='0')
-      #gamePlay.row
-        .col-sm-6
-          button#spin.btn.btn-primary(type='button')
+      #spinIt.row
+        .col-sm-12            
+          button#spin.btn.btn-primary.center-block(type='button')
             | Spin
-        .col-sm-6
-          input(type='text', id="letter" placeholder='letter' maxlength="1" pattern="[a-zA-Z]{1}")
-          input(type='text', id="word" placeholder='word')
+      #gamePlay.row
+        .col-sm-4
+          input.center-block(type='text', id="letter" placeholder='letter' maxlength="1" pattern="[a-zA-Z]{1}")
+        .col-sm-4            
+        .col-sm-4
+          input.center-block(type='text', id="word" placeholder='word')
       #guess.row
-        .col-sm-6
-          button#enterLetter.btn.btn-success(type='button')
+        .col-sm-4
+          button#enterLetter.btn.btn-success.center-block(type='button')
             | Enter Letter
-        .col-sm-6
-          button#guessWord.btn.btn-danger(type='button')
+        .col-sm-4            
+        .col-sm-4
+          button#guessWord.btn.btn-danger.center-block(type='button')
             | Guess Word
     script(src='/socket.io/socket.io.js')
     script(src='/lib/jquery/dist/jquery.min.js')
