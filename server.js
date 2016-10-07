@@ -16,8 +16,15 @@ app.set('view engine', 'pug')
 
 app.use(express.static('public'))
 
+
+
+
+//routes----------
 app.get('/', (req, res) => {
-  res.render('index')
+  Game.find()
+    .or([{ player1: { $exists: false } }, { player2: { $exists: false } }])
+    .exists('result', false)
+    .then(games => res.render('home', { games }))
 })
 
 app.get('/game', (req, res) => {
@@ -26,19 +33,27 @@ app.get('/game', (req, res) => {
 })
 app.get('/game/create', (req, res) => {
   Game.create({
-      answer: [],
+
     })
-    .then(wordSelect(game))
-    .then(game => res.redirect(`/game/${game._id}`))
+    .then(game => wordSelect(game))
+    .then(g => g.save())
+    .then(game => {
+      console.log("game2", game)
+      res.redirect(`/index/${game._id}`)
+    })
 })
-app.get('/game/:id', (req, res) => {
-  res.render('game')
+app.get('/index/:id', (req, res) => {
+  res.render('index')
 })
 
+
+
+
+
+//model----------
 const Game = mongoose.model('game', {
   answer: Array,
   split: Array,
-  blank: Array,
   currentBoard: Array,
   player1: String,
   player2: String,
@@ -78,8 +93,9 @@ const hasTwoPlayers = game => !!(game.player1 && game.player2)
 const isPlayersTurn = (game, socket) => game.toMove === socket.id
 const isFinished = game => !!game.result
 
-//selecting a word for puzzle
+//selecting a word for puzzle, making blank array for dom population and split array of word letters for matching
 const wordSelect = (game) => {
+  console.log("game1", game)
   let selectedWord = []
   const spookyWords = [
     "afraid", "apparition", "bloodcurdling", "bloody", "bonechilling", "bones", "broomstick", "cackle", "cadaver", "carve", "casket", "cauldron", "cemetery", "chilling", "cobweb", "coffin", "costume", "crawly", "creature", "creepy", "dark", "decapitate", "dew", "disembowel", "dreadful", "exsanguinate", "fangtastic", "frightening", "ghostly", "ghoulish", "goblin", "gory", "grave", "gruesome", "haunted", "hellhound", "howl", "lovecraftian", "macabre", "mausoleum", "moonlit", "morbid", "mummy", "ominous", "party", "phantom", "poltergeist", "potion", "pumpkin", "scary", "scott", "scream", "shadow", "skeleton", "skull", "socketio", "specter", "spell", "spider", "spirits", "spooky", "supernatural", "superstition", "terrifying", "tests", "tombstone", "treat", "trick", "undead", "unearthly", "unnerving", "vampire", "warlock", "werewolf", "witch", "wizard", "wraith", "zombie"
@@ -87,32 +103,16 @@ const wordSelect = (game) => {
   const random = Math.floor(Math.random() * (spookyWords.length - 1)) + 1
   selectedWord = spookyWords[random]
   game.answer = selectedWord
-  wordConvert(selectedWord, game)
   console.log("word", selectedWord)
-    // return selectedWord
-}
-
-// Converting word to array of letter strings
-const wordConvert = (selectedWord, game) => {
-  let splitArray = []
-  underScore(selectedWord, game)
-  splitArray = selectedWord.split('')
+    let splitArray = []
+    splitArray = selectedWord.split('')
   game.split = splitArray
-}
-
-// Converting string letters to underscores
-const underScore = (selectedWord, game) => {
   let scoredArray = []
   scoredArray = selectedWord.replace(/./g, '__.').split('.')
   scoredArray.pop()
-  game.blank = scoredArray
+  game.currentBoard = scoredArray
   return game
 }
-
-
-
-
-
 
 
 mongoose.Promise = Promise
@@ -150,20 +150,23 @@ const toggleNextMove = game => {
   return game
 }
 
+//checks to see if currentBoard is completely answered or not
 const setResult = (game, socket) => {
-  game.blank.filter(item, () => {
-    if (item !== "_") {
+  game.currentBoard.filter(item, () => {
+    if (item !== "_") { //if everything in array does not equal "_''
       if (socket.id === game.player1) {
         game.result = game.player1
+        game.toMove = undefined
       } else {
         game.result = game.player2
+        game.toMove = undefined
       }
     }
     return game
   })
 }
 
-
+//whole process of player turn
 const playerTurn = (move, socket) => {
   Game.findById(socket.gameID)
     .then(game => {

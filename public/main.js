@@ -25,15 +25,23 @@ const socket = io()
 
 
 // Putting underscores to DOM with spacing
-const arrayOutput = (scoredArray) => {
+// const arrayOutput = (scoredArray) => {
+//   const space = " "
+//   $('.theWord').text('')
+//   for (var score in scoredArray) {
+//     $('.theWord').append(scoredArray[score])
+//     $('.theWord').append(space)
+//   }
+// }
+
+const arrayOutput = (game) => {
   const space = " "
   $('.theWord').text('')
-  for (var score in scoredArray) {
-    $('.theWord').append(scoredArray[score])
+  for (var score in game.currentBoard) {
+    $('.theWord').append(game.currentBoard[score])
     $('.theWord').append(space)
   }
 }
-
 
 
 
