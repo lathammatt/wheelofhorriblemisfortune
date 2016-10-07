@@ -105,16 +105,23 @@ const wordSelect = (game) => {
   selectedWord = spookyWords[random]
   game.answer = selectedWord
   console.log("word", selectedWord)
-    let splitArray = []
-    splitArray = selectedWord.split('')
-  game.split = splitArray
+  game.split = wordConvert(selectedWord)
+  game.currentBoard = underScore(selectedWord)
+  return game
+}
+//makes split array of letters from word
+const wordConvert = (selectedWord) => {
+  let splitArray = []
+  splitArray = selectedWord.split('')
+  return splitArray
+}
+//makes array of blanks for start of game
+const underScore = (selectedWord) => {
   let scoredArray = []
   scoredArray = selectedWord.replace(/./g, '__.').split('.')
   scoredArray.pop()
-  game.currentBoard = scoredArray
-  return game
+  return scoredArray
 }
-
 
 mongoose.Promise = Promise
 mongoose.connect(MONGODB_URL, () => {
