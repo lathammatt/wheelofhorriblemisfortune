@@ -53,15 +53,15 @@ $('#enterLetter').on('click', () => {
 })
 
 // Return the array position of the guessed letter
-const letterCheck = (letter) => {
-  let result = splitArray.filter((x, index) => {
-    if (x === letter) {
-      indices.push(index)
-    }
-  })
-  console.log("index", indices)
-  arraySwitch(letter)
-}
+// const letterCheck = (letter) => {
+//   let result = splitArray.filter((x, index) => {
+//     if (x === letter) {
+//       indices.push(index)
+//     }
+//   })
+//   console.log("index", indices)
+//   arraySwitch(letter)
+// }
 
 const arraySwitch = (letter) => {
   console.log("scored", scoredArray)

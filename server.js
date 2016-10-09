@@ -152,38 +152,39 @@ io.on('connect', socket => {
 
 
 const setMove = (game, letter) => {
-  console.log("guesses", game.guesses)
-  // chekc is to find matches with guesses to see if letter has been picked before
-  let check = game.guesses.filter((x) => {
+    console.log("guesses", game.guesses)
+      // chekc is to find matches with guesses to see if letter has been picked before
+    let check = game.guesses.filter((x) => {
       if (x === letter) {
         // creates check array of matches
         return letter
       }
-  })
-  if (check.length > 0) {
-    // if match to guesses is found, then letter has been guessed before. Return game
-    return game
-  } else {
-    // otherwise we process correct letter guess
-    game.guesses.push(letter) // pushed into guesses
-    game.indices = letterCheck(letter, game)
-    game.currentBoard = arraySwitch(letter, game)
+    })
+    if (check.length > 0) {
+      // if match to guesses is found, then letter has been guessed before. Return game
+      return game
+    } else {
+      // otherwise we process correct letter guessed
+      game.guesses.push(letter) // pushed into guesses
+      game.currentBoard = letterCheck(letter, game)
+    }
   }
-}
-
+  // find index numbers of correct letter matches in answer
 const letterCheck = (letter, game) => {
+  //clear out index arrays
+  game.indices = []
   let indices = []
+    //search letter array for matches to guessed letter, pull the corresponding index
   let result = game.split.filter((x, index) => {
     if (x === letter) {
+      //push found indices to array
       indices.push(index)
     }
   })
   console.log("indexes", indices)
-  return indices
-}
 
-const arraySwitch = (letter, game) => {
-  console.log("scored", scoredArray)
+  //using indices array, switch currentBoard array to display the matches to the guessed letter
+
   if (game.indices.length === 0) {
     game.missedLetters.push(letter)
   } else {
