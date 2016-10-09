@@ -61,6 +61,7 @@ const Game = mongoose.model('game', {
   player1: String,
   player2: String,
   toMove: String,
+  message: String,
   result: String,
 })
 
@@ -153,7 +154,7 @@ io.on('connect', socket => {
 
 const setMove = (game, letter) => {
     console.log("guesses", game.guesses)
-      // chekc is to find matches with guesses to see if letter has been picked before
+      //variable check is to find matches with guesses to see if letter has been picked before
     let check = game.guesses.filter((x) => {
       if (x === letter) {
         // creates check array of matches
@@ -162,10 +163,13 @@ const setMove = (game, letter) => {
     })
     if (check.length > 0) {
       // if match to guesses is found, then letter has been guessed before. Return game
+      game.message = "You have failed and draw ever closer to your doom"
       return game
     } else {
       // otherwise we process correct letter guessed
       game.guesses.push(letter) // pushed into guesses
+      //function for determining points, add to message below
+      game.message = "Well done"
       game.currentBoard = letterCheck(letter, game)
     }
   }
