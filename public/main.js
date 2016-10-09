@@ -12,15 +12,13 @@ const arrayOutput = (game) => {
     $('.theWord').append(game.currentBoard[score])
     $('.theWord').append(space)
   }
+  $('#letter').val('')
+  $('#word').val('')
 }
 
 
 const responseOutput = game => {
-  if (game.result) {
-    $(#choiceResponse).html(`${game.result} won!`)
-  } else {
-    $(#choiceResponse).html(`${game.result}'s turn'`)
-  }
+    $('#choiceResponse').html(game.message)
 }
 
 
@@ -28,28 +26,14 @@ $('#spin').on('click', () => {
   console.log("urmom");
 })
 
-// let guesses = []
+
 $('#enterLetter').on('click', () => {
   //need Regex check here
-  // console.log("guesses", guesses)
   let letter = $('#letter').val().toLowerCase()
-    // let check = guesses.filter((x) => {
-    //   if (x === letter) {
-    //     return letter
   socket.emit('player move', letter)
-    // }
 })
-console.log("check", check)
-if (check.length > 0) {
-  $('#choiceResponse').html(`This letter has already been picked, Bloodbag!`)
-    //console.log("Letter already picked")
-} else {
-  console.log("letter", letter);
-  $('#choiceResponse').html(`Good choice!`)
-    // guesses.push(letter)
-  letterCheck(letter)
-}
-})
+
+
 
 
 $('#guessWord').on('click', () => {
