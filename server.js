@@ -58,9 +58,11 @@ const Game = mongoose.model('game', {
   guesses: Array,
   indices: Array,
   missedLetters: Array,
+  turnPoints: Number,
   player1: String,
   player2: String,
   toMove: String,
+  message: String,
   result: String,
 })
 
@@ -134,6 +136,8 @@ io.on('connect', socket => {
   const id = socket.handshake.headers.referer.split('/').slice(-1)[0]
 
   Game.findById(id)
+    .then(g => attemptToJoinGameAsPlayer(g, socket))
+    .then(g => g.save())
     .then(g => {
       socket.join(g._id)
       socket.gameID = g._id
@@ -152,49 +156,56 @@ io.on('connect', socket => {
 
 
 const setMove = (game, letter) => {
-  console.log("guesses", game.guesses)
-  // chekc is to find matches with guesses to see if letter has been picked before
-  let check = game.guesses.filter((x) => {
+    console.log("guesses", game.guesses)
+      //variable check is to find matches with guesses to see if letter has been picked before
+    let check = game.guesses.filter((x) => {
       if (x === letter) {
         // creates check array of matches
         return letter
       }
-  })
-  if (check.length > 0) {
-    // if match to guesses is found, then letter has been guessed before. Return game
-    return game
-  } else {
-    // otherwise we process correct letter guess
-    game.guesses.push(letter) // pushed into guesses
-    game.indices = letterCheck(letter, game)
-    game.currentBoard = arraySwitch(letter, game)
+    })
+    if (check.length > 0) {
+      // if match to guesses is found, then letter has been guessed before. Return game
+      game.message = "This was already chosen"
+      return game
+    } else {
+      // otherwise we process correct letter guessed
+      game.guesses.push(letter) // pushed into guesses
+      game.currentBoard = letterCheck(letter, game)
+      return game
+    }
   }
-}
-
+  // find index numbers of correct letter matches in answer
 const letterCheck = (letter, game) => {
+  //clear out index arrays
+  game.indices = []
   let indices = []
+    //search letter array for matches to guessed letter, pull the corresponding index
   let result = game.split.filter((x, index) => {
     if (x === letter) {
+      //push found indices to array
       indices.push(index)
     }
   })
   console.log("indexes", indices)
-  return indices
-}
-
-const arraySwitch = (letter, game) => {
-  console.log("scored", scoredArray)
+    //using indices array, switch currentBoard array to display the matches to the guessed letter
   if (game.indices.length === 0) {
     game.missedLetters.push(letter)
+    game.message = "You have failed this time and draw ever closer to your doom"
+    return game.currentBoard
   } else {
     for (var i = 0; i < game.indices.length; i++) {
       console.log("in loop", game.indices[i], letter)
       game.currentBoard.splice(game.indices[i], 1, letter)
     }
+    //function for determining points, add to message below
+    game.message = "A wise choice. You live a little longer."
     console.log("new", game.currentBoard)
     game.indices = []
+    return game.currentBoard
   }
 }
+
 
 
 const toggleNextMove = game => {
@@ -204,14 +215,18 @@ const toggleNextMove = game => {
 
 //checks to see if currentBoard is completely answered or not
 const setResult = (game, socket) => {
-  game.currentBoard.filter(item, () => {
+  console.log(game.currentBoard)
+  game.currentBoard.filter(item => {
     if (item !== "_") { //if everything in array does not equal "_''
-      if (socket.id === game.player1) {
+      console.log("socketcheck", socket)
+      if (game.player1 === socket.id) {
         game.result = game.player1
         game.toMove = undefined
+        game.message = "Player1 has survived. Player2 has been vanguished into the abyss."
       } else {
         game.result = game.player2
         game.toMove = undefined
+        game.message = "Player2 has survived. Player1 has been vanguished into the abyss."
       }
     }
     return game
@@ -223,13 +238,13 @@ const playerTurn = (letter, socket) => {
   Game.findById(socket.gameID)
     .then(game => {
       if (isFinished(game)) {
-        return
+        return Promise.reject('Cannot move')
       }
       return game
     })
     .then(g => setMove(g, letter))
     .then(toggleNextMove)
-    .then(setResult)
+    .then(setResult())
     .then(g => g.save())
     .then(g => io.to(g._id).emit('move made', g))
     .catch(console.error)
