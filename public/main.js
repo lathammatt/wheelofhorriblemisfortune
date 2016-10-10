@@ -28,7 +28,6 @@ $('#spin').on('click', () => {
 
 
 $('#enterLetter').on('click', () => {
-  //need Regex check here
   let letter = $('#letter').val().toLowerCase()
   socket.emit('player move', letter)
 })
@@ -36,7 +35,6 @@ $('#enterLetter').on('click', () => {
 
 $('#guessWord').on('click', () => {
   let wordGuess = $('#word').val().toLowerCase()
-  //need Regex check here
   socket.emit('player guess', wordGuess)
 })
 

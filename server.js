@@ -177,7 +177,6 @@ const setMove = (game, letter) => {
 const letterCheck = (letter, game) => {
     //clear out index arrays
   game.indices = []
-  // let indices = []
     //search letter array for matches to guessed letter, pull the corresponding index
   let result = game.splitWord.filter((x, index) => {
     if (x === letter) {
@@ -214,7 +213,7 @@ const setResult = (game, socket) => {
     if (game.player1 === socket.id) {
       game.result = game.player1
       game.toMove = undefined
-      game.message = "Player1 has survived. Player2 has been vanguished into the abyss."
+      game.message = "Player1 has survived. Player2 has been vanquished into the abyss."
       return game
     } else {
       game.result = game.player2
