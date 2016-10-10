@@ -20,3 +20,4 @@ Group project to familiarize with use of Socket.io.
     - Mongoose 4.6.3
     - Pug 2.0
     - Socket.io 1.4.8
+    - Bootstrap 3.3.7

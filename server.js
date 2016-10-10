@@ -16,9 +16,6 @@ app.set('view engine', 'pug')
 
 app.use(express.static('public'))
 
-
-
-
 //routes----------
 app.get('/', (req, res) => {
   Game.find()
@@ -42,10 +39,6 @@ app.get('/game/create', (req, res) => {
 app.get('/index/:id', (req, res) => {
   res.render('index')
 })
-
-
-
-
 
 //model----------
 const Game = mongoose.model('game', {
@@ -208,8 +201,7 @@ const letterCheck = (letter, game) => {
   }
 }
 
-
-
+//changing turns over
 const toggleNextMove = game => {
   game.toMove = game.toMove === game.player1 ? game.player2 : game.player1
   return game
@@ -235,7 +227,7 @@ const setResult = (game, socket) => {
 }
 
 
-//whole process of player turn
+//whole process of player guessing letter
 const playerTurn = (letter, socket) => {
   Game.findById(socket.gameID)
     .then(game => {
@@ -255,6 +247,7 @@ const playerTurn = (letter, socket) => {
     .catch(console.error)
 }
 
+//whole process for player guessing word
 const playerGuess = (word, socket) => {
   console.log("checking here", socket.id, word)
   Game.findById(socket.gameID)

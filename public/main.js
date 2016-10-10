@@ -3,8 +3,6 @@
 const socket = io()
 
 
-
-
 const arrayOutput = (game) => {
   const space = " "
   $('.theWord').text('')
@@ -36,8 +34,6 @@ $('#enterLetter').on('click', () => {
 })
 
 
-
-
 $('#guessWord').on('click', () => {
   let wordGuess = $('#word').val().toLowerCase()
   //need Regex check here
@@ -48,7 +44,6 @@ const render = game => {
   arrayOutput(game)
   responseOutput(game)
 }
-
 
 
 socket.on('connect', () => console.log(`Socket connected: ${socket.id}`))
