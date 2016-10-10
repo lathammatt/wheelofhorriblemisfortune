@@ -1,14 +1,17 @@
-doctype
-html
+doctype html
+html(lang='en')
   head
-    title Tick Tack Doh!
+    title Wheel of Horrible Misfortune
+    link(rel='stylesheet', href='/lib/bootstrap/dist/css/bootstrap.min.css')
     link(rel='stylesheet', href='/main.css')
+    link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Creepster')
   body
-    h1 Tick Tack Doh!
+    h1.wheel
+      span(style="font-family: Creepster") Wheel of Horrible Misfortune
     .create
       a(href='/game/create') Start New
     if games.length
     .join
-      a(href='/game') Join a Pending Game
+      h2.span(style="font-family: Creepster; font-size: 4rem") Join a Pending Game
       for game in games
         li: a(href=`/index/${game._id}`) Game: #{game._id}
