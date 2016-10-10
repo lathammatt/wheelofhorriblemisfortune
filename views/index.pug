@@ -15,26 +15,26 @@ html(lang='en')
           label(for='size_1') Score
           input#pl1Score(type='text', value='0')
         #missLetters.col-sm-4
-          h3 Missed letters
+          h2 Missed letters
         #pl2.col-sm-4
           h3 Player 2
           label(for='size_1') Score
           input#pl2Score(type='text', value='0')
       #spinIt.row
-        .col-sm-12            
+        .col-sm-12
           button#spin.btn.btn-primary.center-block(type='button')
             | Spin
       #gamePlay.row
         .col-sm-4
           input.center-block(type='text', id="letter" placeholder='letter' maxlength="1" pattern="[a-zA-Z]{1}")
-        #choiceResponse.col-sm-4            
+        #choiceResponse.col-sm-4
         .col-sm-4
           input.center-block(type='text', id="word" placeholder='word')
       #guess.row
         .col-sm-4
           button#enterLetter.btn.btn-success.center-block(type='button')
             | Enter Letter
-        .col-sm-4            
+        .col-sm-4
         .col-sm-4
           button#guessWord.btn.btn-danger.center-block(type='button')
             | Guess Word
