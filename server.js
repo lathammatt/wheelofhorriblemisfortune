@@ -156,14 +156,16 @@ io.on('connect', socket => {
 
 
 const setMove = (game, letter) => {
-    console.log("guesses", game.guesses)
+    console.log("letter", letter)
       //variable check is to find matches with guesses to see if letter has been picked before
     let check = game.guesses.filter((x) => {
       if (x === letter) {
-        // creates check array of matches
+        console.log("check matches", letter)
+          // creates check array of matches
         return letter
       }
     })
+    console.log("check variable", check)
     if (check.length > 0) {
       // if match to guesses is found, then letter has been guessed before. Return game
       game.message = "This was already chosen"
@@ -171,26 +173,30 @@ const setMove = (game, letter) => {
     } else {
       // otherwise we process correct letter guessed
       game.guesses.push(letter) // pushed into guesses
+      console.log("guesses pushed", game.guesses)
       game.currentBoard = letterCheck(letter, game)
       return game
     }
   }
   // find index numbers of correct letter matches in answer
 const letterCheck = (letter, game) => {
-  //clear out index arrays
+  console.log("letter2", letter)
+    //clear out index arrays
   game.indices = []
-  let indices = []
+  // let indices = []
     //search letter array for matches to guessed letter, pull the corresponding index
   let result = game.split.filter((x, index) => {
     if (x === letter) {
       //push found indices to array
-      indices.push(index)
+      game.indices.push(index)
     }
   })
-  console.log("indexes", indices)
+  console.log("indexes", game.indices)
     //using indices array, switch currentBoard array to display the matches to the guessed letter
+  console.log("index length", game.indices.length)
   if (game.indices.length === 0) {
     game.missedLetters.push(letter)
+    console.log("missed letters", game.missedLetters)
     game.message = "You have failed this time and draw ever closer to your doom"
     return game.currentBoard
   } else {
@@ -200,7 +206,7 @@ const letterCheck = (letter, game) => {
     }
     //function for determining points, add to message below
     game.message = "A wise choice. You live a little longer."
-    console.log("new", game.currentBoard)
+    console.log("current board", game.currentBoard)
     game.indices = []
     return game.currentBoard
   }
@@ -215,26 +221,27 @@ const toggleNextMove = game => {
 
 //checks to see if currentBoard is completely answered or not
 const setResult = (game, socket) => {
-  console.log(game.currentBoard)
-  game.currentBoard.filter(item => {
-    if (item !== "_") { //if everything in array does not equal "_''
-      console.log("socketcheck", socket)
-      if (game.player1 === socket.id) {
-        game.result = game.player1
-        game.toMove = undefined
-        game.message = "Player1 has survived. Player2 has been vanguished into the abyss."
-      } else {
-        game.result = game.player2
-        game.toMove = undefined
-        game.message = "Player2 has survived. Player1 has been vanguished into the abyss."
-      }
+  // console.log(game.currentBoard)
+  if (game.currentBoard === game.split) { //if currentBoard is not fully completed
+    if (game.player1 === socket.id) {
+      game.result = game.player1
+      game.toMove = undefined
+      game.message = "Player1 has survived. Player2 has been vanguished into the abyss."
+      return game
+    } else {
+      game.result = game.player2
+      game.toMove = undefined
+      game.message = "Player2 has survived. Player1 has been vanguished into the abyss."
+      return game
     }
-    return game
-  })
+  }
+  return game
 }
+
 
 //whole process of player turn
 const playerTurn = (letter, socket) => {
+  console.log("checking here", socket.id)
   Game.findById(socket.gameID)
     .then(game => {
       if (isFinished(game)) {
@@ -244,7 +251,7 @@ const playerTurn = (letter, socket) => {
     })
     .then(g => setMove(g, letter))
     .then(toggleNextMove)
-    .then(setResult())
+    .then(g => setResult(g, socket))
     .then(g => g.save())
     .then(g => io.to(g._id).emit('move made', g))
     .catch(console.error)
