@@ -19,7 +19,7 @@ const arrayOutput = (game) => {
 
 const responseOutput = game => {
     $('#choiceResponse').html(game.message)
-    $('#missLetters').html(game.missedLetters)
+    $('#missLetters').html(`Wrong guesses: ${game.missedLetters}`)
 }
 
 

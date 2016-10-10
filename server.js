@@ -111,6 +111,7 @@ const wordSelect = (game) => {
     console.log("word", selectedWord)
     game.split = wordConvert(selectedWord)
     game.currentBoard = underScore(selectedWord)
+    console.log("strings", game.split.toString(), game.currentBoard.toString())
     return game
   }
   //makes split array of letters from word
@@ -222,7 +223,7 @@ const toggleNextMove = game => {
 //checks to see if currentBoard is completely answered or not
 const setResult = (game, socket) => {
   // console.log(game.currentBoard)
-  if (game.currentBoard === game.split) { //if currentBoard is not fully completed
+  if (game.currentBoard.toString() === game.split.toString()) { //if currentBoard is not fully completed
     if (game.player1 === socket.id) {
       game.result = game.player1
       game.toMove = undefined
