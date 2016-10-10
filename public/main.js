@@ -18,13 +18,14 @@ const arrayOutput = (game) => {
 
 
 const responseOutput = game => {
-    $('#choiceResponse').html(game.message)
-    $('#missLetters').html(`Wrong guesses: ${game.missedLetters}`)
+  $('#choiceResponse').html(game.message)
+  $('#missLetters').html(`Wrong guesses: ${game.missedLetters}`)
 }
 
 
 $('#spin').on('click', () => {
-  console.log("urmom");
+  //needs function and testing
+
 })
 
 
@@ -38,18 +39,9 @@ $('#enterLetter').on('click', () => {
 
 
 $('#guessWord').on('click', () => {
-  console.log("fired")
   let wordGuess = $('#word').val().toLowerCase()
-  let answer = selectedWord.toString()
-  console.log(answer, wordGuess)
-  if (answer === wordGuess) {
-    arrayOutput(splitArray)
-    $('#choiceResponse').html(`Hazaa!  Correct!`)
-  } else {
-    $('#choiceResponse').html(`You have guessed wrong and we'll have to take a finger!`)
-      //console.log("Wrong!")
-  }
-  console.log(wordGuess)
+  //need Regex check here
+  socket.emit('player guess', wordGuess)
 })
 
 const render = game => {

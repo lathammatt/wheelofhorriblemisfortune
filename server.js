@@ -27,10 +27,6 @@ app.get('/', (req, res) => {
     .then(games => res.render('home', { games }))
 })
 
-// app.get('/game', (req, res) => {
-//   Game.find()
-//     .then(games => res.render('index', { games }))
-// })
 app.get('/game/create', (req, res) => {
   Game.create({
       guesses: []
@@ -42,6 +38,7 @@ app.get('/game/create', (req, res) => {
       res.redirect(`/index/${game._id}`)
     })
 })
+
 app.get('/index/:id', (req, res) => {
   res.render('index')
 })
@@ -53,7 +50,7 @@ app.get('/index/:id', (req, res) => {
 //model----------
 const Game = mongoose.model('game', {
   answer: Array,
-  split: Array,
+  splitWord: Array,
   currentBoard: Array,
   guesses: Array,
   indices: Array,
@@ -100,7 +97,6 @@ const isFinished = game => !!game.result
 
 //selecting a word for puzzle, making blank array for dom population and split array of word letters for matching
 const wordSelect = (game) => {
-    console.log("game1", game)
     let selectedWord = []
     const spookyWords = [
       "afraid", "apparition", "bloodcurdling", "bloody", "bonechilling", "bones", "broomstick", "cackle", "cadaver", "carve", "casket", "cauldron", "cemetery", "chilling", "cobweb", "coffin", "costume", "crawly", "creature", "creepy", "dark", "decapitate", "dew", "disembowel", "dreadful", "exsanguinate", "fangtastic", "frightening", "ghostly", "ghoulish", "goblin", "gory", "grave", "gruesome", "haunted", "hellhound", "howl", "lovecraftian", "macabre", "mausoleum", "moonlit", "morbid", "mummy", "ominous", "party", "phantom", "poltergeist", "potion", "pumpkin", "scary", "scott", "scream", "shadow", "skeleton", "skull", "socketio", "specter", "spell", "spider", "spirits", "spooky", "supernatural", "superstition", "terrifying", "tests", "tombstone", "treat", "trick", "undead", "unearthly", "unnerving", "vampire", "warlock", "werewolf", "witch", "wizard", "wraith", "zombie"
@@ -109,9 +105,8 @@ const wordSelect = (game) => {
     selectedWord = spookyWords[random]
     game.answer = selectedWord
     console.log("word", selectedWord)
-    game.split = wordConvert(selectedWord)
+    game.splitWord = wordConvert(selectedWord)
     game.currentBoard = underScore(selectedWord)
-    console.log("strings", game.split.toString(), game.currentBoard.toString())
     return game
   }
   //makes split array of letters from word
@@ -150,23 +145,30 @@ io.on('connect', socket => {
     })
 
   socket.on('player move', letter => playerTurn(letter, socket))
+  socket.on('player guess', word => playerGuess(word, socket))
   console.log(`Socket connected: ${socket.id}`)
   socket.on('disconnect', () => console.log(`Socket disconnected`))
 })
 
-
+//checks if word guess is correct or not
+const checkWord = (game, word) => {
+  if (game.answer.toString() === word.toString()){
+    game.currentBoard = game.splitWord
+    return game
+  } else {
+    game.message = "You have failed in your haste. Your fate is sealed soon."
+    return game
+  }
+}
 
 const setMove = (game, letter) => {
-    console.log("letter", letter)
       //variable check is to find matches with guesses to see if letter has been picked before
     let check = game.guesses.filter((x) => {
       if (x === letter) {
-        console.log("check matches", letter)
           // creates check array of matches
         return letter
       }
     })
-    console.log("check variable", check)
     if (check.length > 0) {
       // if match to guesses is found, then letter has been guessed before. Return game
       game.message = "This was already chosen"
@@ -174,40 +176,33 @@ const setMove = (game, letter) => {
     } else {
       // otherwise we process correct letter guessed
       game.guesses.push(letter) // pushed into guesses
-      console.log("guesses pushed", game.guesses)
       game.currentBoard = letterCheck(letter, game)
       return game
     }
   }
   // find index numbers of correct letter matches in answer
 const letterCheck = (letter, game) => {
-  console.log("letter2", letter)
     //clear out index arrays
   game.indices = []
   // let indices = []
     //search letter array for matches to guessed letter, pull the corresponding index
-  let result = game.split.filter((x, index) => {
+  let result = game.splitWord.filter((x, index) => {
     if (x === letter) {
       //push found indices to array
       game.indices.push(index)
     }
   })
-  console.log("indexes", game.indices)
     //using indices array, switch currentBoard array to display the matches to the guessed letter
-  console.log("index length", game.indices.length)
   if (game.indices.length === 0) {
     game.missedLetters.push(letter)
-    console.log("missed letters", game.missedLetters)
     game.message = "You have failed this time and draw ever closer to your doom"
     return game.currentBoard
   } else {
     for (var i = 0; i < game.indices.length; i++) {
-      console.log("in loop", game.indices[i], letter)
       game.currentBoard.splice(game.indices[i], 1, letter)
     }
     //function for determining points, add to message below
     game.message = "A wise choice. You live a little longer."
-    console.log("current board", game.currentBoard)
     game.indices = []
     return game.currentBoard
   }
@@ -223,7 +218,7 @@ const toggleNextMove = game => {
 //checks to see if currentBoard is completely answered or not
 const setResult = (game, socket) => {
   // console.log(game.currentBoard)
-  if (game.currentBoard.toString() === game.split.toString()) { //if currentBoard is not fully completed
+  if (game.currentBoard.toString() === game.splitWord.toString()) { //if currentBoard is not fully completed
     if (game.player1 === socket.id) {
       game.result = game.player1
       game.toMove = undefined
@@ -232,7 +227,7 @@ const setResult = (game, socket) => {
     } else {
       game.result = game.player2
       game.toMove = undefined
-      game.message = "Player2 has survived. Player1 has been vanguished into the abyss."
+      game.message = "Player2 has survived. Player1 has been vanquished and cast into the abyss."
       return game
     }
   }
@@ -242,13 +237,15 @@ const setResult = (game, socket) => {
 
 //whole process of player turn
 const playerTurn = (letter, socket) => {
-  console.log("checking here", socket.id)
   Game.findById(socket.gameID)
     .then(game => {
       if (isFinished(game)) {
         return Promise.reject('Cannot move')
       }
+      if (socket.id === game.toMove) {
+
       return game
+      }
     })
     .then(g => setMove(g, letter))
     .then(toggleNextMove)
@@ -257,3 +254,26 @@ const playerTurn = (letter, socket) => {
     .then(g => io.to(g._id).emit('move made', g))
     .catch(console.error)
 }
+
+const playerGuess = (word, socket) => {
+  console.log("checking here", socket.id, word)
+  Game.findById(socket.gameID)
+    .then(game => {
+      if (isFinished(game)) {
+        console.log("done")
+        return Promise.reject('Cannot move')
+      }
+      if (socket.id === game.toMove) {
+        console.log("player turn")
+
+      return game
+      }
+    })
+    .then(g => checkWord(g, word))
+    .then(toggleNextMove)
+    .then(g => setResult(g, socket))
+    .then(g => g.save())
+    .then(g => io.to(g._id).emit('move made', g))
+    .catch(console.error)
+}
+
